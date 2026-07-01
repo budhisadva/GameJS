@@ -1,11 +1,12 @@
 import './style.css'
 
-const scene = new THREE.Scene();
+const scene = new THREE.Scene(); // aqui se crea el esceneario
 
-const fov = 75;
-const aspectRatio = window.innerWidth / window.innerHeight;
-const near = 0.1;
-const far = 1000;
+// en esta parte es la configuracion de la perspectiva de la camara
+const fov = 75; // field of view
+const aspectRatio = window.innerWidth / window.innerHeight; // relacion de aspecto (ancho / alto) para que la imagen no se vea estirada
+const near = 0.1; // distancia minima que la camara puede ver
+const far = 1000; // distancia maxima que la camara puede ver
 
 const camera = new THREE.PerspectiveCamera(
   fov,
@@ -13,8 +14,9 @@ const camera = new THREE.PerspectiveCamera(
   near,
   far
 )
-camera.position.z = 2;
-camera.position.y = 1;
+camera.position.z = 2; // ubicamos la camara un poco atras
+camera.position.y = 0; // ubicamos la camara un poco arriba
+//-----------------------------------------------------------------
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -22,22 +24,47 @@ document.querySelector('#app').appendChild(renderer.domElement);
 
 // inserta tu videojuego desde aqui :v
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({
-  color: 0x0000ff,
-  wireframe: true
-});
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-camera.lookAt(cube.position)
+const boxWidth = 1;
+const boxHeight = 1;
+const boxDepth = 1;
 
-renderer.render(scene, camera);
+const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-function animate() {
-  requestAnimationFrame(animate);
-  cube.rotation.y += 0.01;
-  cube.rotation.x += 0.002;
-  renderer.render(scene, camera);
+
+function makeInstance(geometry, color, x){
+  const material = new THREE.MeshPhongMaterial({color});
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+  cube.position.x = x;
+  return cube;
 }
 
-animate();
+const cubes = [
+  makeInstance(geometry, 0x44aa88, 0),
+  makeInstance(geometry, 0x8844aa, -2),
+  makeInstance(geometry, 0xaa8844,  2),
+];
+
+// configuracion para la iluminacion
+const color = 0xFFFFFF;
+const intensity = 3;
+const light = new THREE.DirectionalLight(color, intensity);
+light.position.set(-1,2,4);
+scene.add(light);
+//-----------------------------------------------------------
+
+
+function animate(time) {
+  time *= 0.001;
+  
+  cubes.forEach((cube, ndx) => {
+    const speed = 1 + ndx * .1;
+    const rot = time * speed;
+    cube.rotation.x = rot;
+    cube.rotation.y = rot;
+  });
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
