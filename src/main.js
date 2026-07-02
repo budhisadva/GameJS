@@ -28,7 +28,9 @@ const boxWidth = 1;
 const boxHeight = 1;
 const boxDepth = 1;
 
-const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+const geometry_cube = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+const geometry_sphere = new THREE.SphereGeometry(0.5, 16, 10);
+const geometry_torus = new THREE.TorusGeometry(0.5, 0.15, 25, 32);
 
 
 function makeInstance(geometry, color, x){
@@ -40,9 +42,9 @@ function makeInstance(geometry, color, x){
 }
 
 const cubes = [
-  makeInstance(geometry, 0x44aa88, 0),
-  makeInstance(geometry, 0x8844aa, -2),
-  makeInstance(geometry, 0xaa8844,  2),
+  makeInstance(geometry_cube, 0x44aa88, 0),
+  makeInstance(geometry_sphere, 0x8844aa, -2),
+  makeInstance(geometry_torus, 0xaa8844,  2),
 ];
 
 // configuracion para la iluminacion
