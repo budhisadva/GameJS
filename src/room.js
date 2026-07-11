@@ -1,6 +1,6 @@
 import './style.css'
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import {  PointerLockControls } from 'three/addons/controls/PointerLockControls.js'; // libreia para mover la camara con el teclado
 
 function main(){
 
@@ -19,21 +19,40 @@ function main(){
     const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
     camera.position.set( 0, 10, 20);
 
-    const controls = new OrbitControls( camera, canvas);
-    controls.target.set( 0, 5, 0 );
-    controls.update();
-
     scene.background = new THREE.Color( 'black' );
+
+    const controls_k = new PointerLockControls(camera, renderer.domElement);
+    document.addEventListener('click', () => controls_k.lock());
+    const move = { forward: false, backward: false, left: false, right: false };
+    document.addEventListener('keydown', (e) => {
+        switch (e.code) {
+            case 'KeyW': move.forward = true; break;
+            case 'KeyS': move.backward = true; break;
+            case 'KeyA': move.left = true; break;
+            case 'KeyD': move.right = true; break;
+        }
+    });
+    document.addEventListener('keyup', (e) => {
+        switch (e.code) {
+            case 'KeyW': move.forward = false; break;
+            case 'KeyS': move.backward = false; break;
+            case 'KeyA': move.left = false; break;
+            case 'KeyD': move.right = false; break;
+        }
+    });
+
+    const speed = 0.1;
 
     {
         const loader = new THREE.TextureLoader();
         const planeSize = 40;
-        const texture = loader.load('https://threejs.org/manual/examples/resources/images/checker.png');
+        const texture = loader.load('/textures/wall_6.jpg');
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
         texture.colorSpace = THREE.SRGBColorSpace;
-        const repeats = planeSize / 2;
+        const repeats = 4;
         texture.repeat.set( repeats, repeats);
 
         const planeGeo = new THREE.PlaneGeometry( planeSize, planeSize );
@@ -75,6 +94,12 @@ function main(){
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
         }
+
+        if (move.forward) controls_k.moveForward(speed);
+        if (move.backward) controls_k.moveForward(-speed);
+        if (move.right) controls_k.moveRight(speed);
+        if (move.left) controls_k.moveRight(-speed);
+
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
