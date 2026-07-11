@@ -17,7 +17,7 @@ function main(){
     const near = 0.1;
     const far = 100;
     const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-    camera.position.set( 0, 10, 20);
+    camera.position.set( 0, 6, 20);
 
     scene.background = new THREE.Color( 'black' );
 
@@ -45,24 +45,71 @@ function main(){
 
     {
         const loader = new THREE.TextureLoader();
-        const planeSize = 40;
+        
         const texture = loader.load('/textures/wall_6.jpg');
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
         texture.minFilter = THREE.NearestFilter;
         texture.colorSpace = THREE.SRGBColorSpace;
-        const repeats = 4;
-        texture.repeat.set( repeats, repeats);
+        //const repeats = 4;
+        texture.repeat.set( 4, 2);
 
-        const planeGeo = new THREE.PlaneGeometry( planeSize, planeSize );
-        const planeMat = new THREE.MeshPhongMaterial( {
+        const roomSize = 40;
+        const wallHeight = 10;
+        const half = roomSize / 2;
+
+        const wallGeo = new THREE.PlaneGeometry( roomSize, wallHeight );
+        const wallMat = new THREE.MeshPhongMaterial( {
             map: texture,
-            side: THREE.DoubleSide,
+            //side: THREE.DoubleSide,
         } );
-        const mesh = new THREE.Mesh( planeGeo, planeMat );
-        mesh.rotation.x = Math.PI * - .5;
-        scene.add(mesh);
+
+        // pared norte (fondo -z)
+        const wallNorth = new THREE.Mesh( wallGeo, wallMat );
+        wallNorth.position.set(0, wallHeight / 2, -half);
+        scene.add(wallNorth);
+
+        // pared sur (frente +z)
+        const wallSouth = new THREE.Mesh(wallGeo, wallMat);
+        wallSouth.position.set(0, wallHeight/2, half);
+        wallSouth.rotation.y = Math.PI;
+        scene.add(wallSouth);
+
+        //pared oeste (-x)
+        const wallWest = new THREE.Mesh(wallGeo, wallMat);
+        wallWest.position.set(-half, wallHeight/2, 0);
+        wallWest.rotation.y = Math.PI/2;
+        scene.add(wallWest);
+
+        // pared este (+x)
+        const wallEast = new THREE.Mesh(wallGeo, wallMat);
+        wallEast.position.set(half, wallHeight/2, 0);
+        wallEast.rotation.y = -Math.PI / 2;
+        scene.add(wallEast);
+
+        // texturas para techo y piso
+        const textureFloor = loader.load('textures/wall_7.jpg');
+        textureFloor.wrapS = THREE.RepeatWrapping;
+        textureFloor.wrapT = THREE.RepeatWrapping;
+        textureFloor.magFilter = THREE.NearestFilter;
+        textureFloor.minFilter = THREE.NearestFilter;
+        textureFloor.colorSpace = THREE.SRGBColorSpace;
+        textureFloor.repeat.set( 4, 2);
+        
+        const ceilingGeo = new THREE.PlaneGeometry(roomSize, roomSize);
+        const floorMat = new THREE.MeshPhongMaterial({
+            map: textureFloor
+        });
+        const ceiling = new THREE.Mesh(ceilingGeo, floorMat);
+        ceiling.position.set(0, wallHeight, 0);
+        ceiling.rotation.x = Math.PI / 2;
+        scene.add(ceiling);
+
+        const floor = new THREE.Mesh(ceilingGeo, floorMat);
+        floor.position.set(0,0,0);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
 
     }
 
