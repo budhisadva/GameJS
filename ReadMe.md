@@ -1,7 +1,7 @@
 # (Nombre por definirse)
 
 Presentamos un visualizador para proyectos de cómputo gráfico.
-Basados en las tecnologías: vite y THREEJS (webGL), el objetivo es que de forma 
+Basados en las tecnologías: vite y THREEJS (webGL), el objetivo es que de forma
 sencilla podamos realizar experiencias gráficas de gran variedad y calidad.
 
 ## Requisitos
@@ -28,3 +28,12 @@ npm run dev
 - package.json
 
 Siendo el archivo src/main.js el core de nuestra aplicación.
+
+## controles
+
+- W: adelante
+- S: atras
+- A: izquierda
+- D: derecha
+- Click: empezar interaccion con la escena
+- Esc: salir de la escena
